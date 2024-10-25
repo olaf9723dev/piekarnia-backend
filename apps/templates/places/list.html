@@ -1,0 +1,131 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+{% block title %} Lokale {% endblock title %}
+
+{% block content %}
+
+  <div class="header bg-primary pb-6">
+    <div class="container-fluid">
+      <div class="header-body">
+        <div class="row align-items-center py-4">
+          <div class="col-lg-6 col-7">
+            <h6 class="h2 text-white d-inline-block mb-0">Lokale</h6>
+            <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+              <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
+                <li class="breadcrumb-item"><a href="#"><i class="fas fa-home"></i></a></li>
+                <li class="breadcrumb-item"><a href="{% url 'list_of_places' %}">Lokale</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Lokale</li>
+              </ol>
+            </nav>
+          </div>
+          <div class="col-lg-6 col-5 text-right">
+            <a href="{% url 'place_create' %}" class="btn btn-sm btn-neutral">Utwórz nowy lokal</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Page content -->
+  <div class="container-fluid mt--6">
+    <div class="row">
+      <div class="col">
+        <div class="card">
+          <!-- Card header -->
+          <div class="card-header border-0">
+            <h3 class="mb-0">Lokale</h3>
+          </div>
+          <!-- Light table -->
+          <div class="table-responsive">
+            <table class="table align-items-center table-flush">
+              <thead class="thead-light">
+                <tr>
+                  <th scope="col" class="name">Nazwa</th>
+                  <th scope="col" class="address">Adres</th>
+                  <th scope="col" class="city">Miasto</th>
+                  <th scope="col" class="zip_code">Kod Pocztowy</th>
+                  <th scope="col" class="latitude_longitude">Pokaż na mapie</th>
+                  <th scope="col" class="telephone ">Telefon</th>
+                  <th scope="col" class="is_enabled">Otwarte</th>
+                  <th scope="col" class="enable_date">Data Otwarcia</th>
+                  <th scope="col" class="enable_date">Akcje</th>
+                </tr>
+              </thead>
+              <tbody class="list">
+                {% for place in object_list %}
+                <tr>
+                  <th scope="row">
+                    <div class="media align-items-center">
+                      <a href="#" class="avatar rounded-circle mr-3">
+                        <img alt="Image placeholder" src="{{ place.logo.url }}">
+                      </a>
+                      <div class="media-body">
+                        <span class="name mb-0 text-sm">{{ place.name }}</span>
+                      </div>
+                    </div>
+                  </th>
+                  <td class="address">
+                    {{ place.address }}
+                  </td>
+                  <td class="city">
+                    {{ place.city }}
+                  </td>
+                  <td class="zip_code">
+                    {{ place.zip_code }}
+                  </td>
+                  <td class="latitude_longitude">
+                    {{ place.latitude | floatformat:"5" }} / {{ place.longitude | floatformat:"5" }}
+                  </td>
+                  <td class="telephone">
+                    {{ place.telephone }}
+                  </td>
+                  <td>
+                    <span class="badge badge-dot mr-4">
+                      {% if place.is_enabled %}
+                        <i class="bg-success"></i>
+                        <span class="is_enabled" style="color: black; letter-spacing: 0.1em;">Otwarte</span>
+                      {% else %}
+                        <i class="bg-warning"></i>
+                        <span class="is_enabled" style="color: black; letter-spacing: 0.1em;">Zamknięte</span>
+                      {% endif %}
+                    </span>
+                  </td>
+                  <td class="enable_date">
+                      {% if place.enable_date %}
+                        {{ place.enable_date }}
+                      {% else %}
+                        Nieznana
+                      {% endif %}
+                  </td>
+                  <td class="text">
+                    <div class="dropdown">
+                      <a class="btn btn-sm btn-icon-only text-light" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-ellipsis-v"></i>
+                      </a>
+                      <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
+{#                          {% if not place.refresh_token %}#}
+                            <a class="dropdown-item" href="{{ dotykacka_url }}{{ place.pk }}">Pobierz token dla lokalu</a>
+{#                          {% endif %}#}
+                          <a class="dropdown-item" href="{% url 'place' place.id %}">Szczegóły</a>
+                          <a class="dropdown-item" href="{% url 'place_update' place.id %}">Edytuj</a>
+                          <a class="dropdown-item" href="{% url 'place_delete' place.id %}">Usuń</a>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {% include "includes/footer.html" %}
+
+  </div>
+
+{% endblock content %}
+
+<!-- Specific JS goes HERE -->
+{% block javascripts %}{% endblock javascripts %}

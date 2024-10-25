@@ -1,0 +1,112 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+{% block title %} Kategorie {% endblock title %}
+
+{% block content %}
+
+  <div class="header bg-primary pb-6">
+    <div class="container-fluid">
+      <div class="header-body">
+        <div class="row align-items-center py-4">
+          <div class="col-lg-6 col-7">
+            <h6 class="h2 text-white d-inline-block mb-0">Kategorie</h6>
+            <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+              <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
+                <li class="breadcrumb-item"><a href="#"><i class="fas fa-home"></i></a></li>
+                <li class="breadcrumb-item"><a href="{% url 'list_of_categories' %}">Kategorie</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Kategorie</li>
+              </ol>
+            </nav>
+          </div>
+          <div class="col-lg-6 col-5 text-right">
+            <a href="{% url 'category_create' %}" class="btn btn-sm btn-neutral">Utwórz nową kategorię</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Page content -->
+  <div class="container-fluid mt--6">
+    <div class="row">
+      <div class="col">
+        <div class="card">
+          <!-- Card header -->
+          <div class="card-header border-0">
+            <h3 class="mb-0">Kategorie</h3>
+          </div>
+          <!-- Light table -->
+          <div class="table-responsive">
+            <table class="table align-items-center table-flush">
+              <thead class="thead-light">
+                <tr>
+                  <th scope="col" class="name">Nazwa</th>
+                  <th scope="col" class="image">Zdjęcie</th>
+                  <th scope="col" class="is_enabled">Status</th>
+                  <th scope="col" class="parent">Rodzic</th>
+                  <th scope="col" class="parent">Akcje</th>
+                </tr>
+              </thead>
+              <tbody class="list">
+                {% for category in categories %}
+                <tr>
+                  <th scope="row">
+                    <div class="media align-items-center">
+                      <div class="media-body">
+                        <span class="name mb-0 text-sm">{{ category.name }}</span>
+                      </div>
+                    </div>
+                  </th>
+                  <td class="image">
+                    <div class="media align-items-center">
+                      <a href="#" class="avatar rounded-circle mr-3">
+                        <img alt="Image placeholder" src="{{ category.image_url }}">
+                      </a>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="badge badge-dot mr-4">
+                      {% if category.is_enabled %}
+                        <i class="bg-success"></i>
+                        <span class="is_enabled" style="color: black; letter-spacing: 0.1em;">Włączona</span>
+                      {% else %}
+                         <i class="bg-warning"></i>
+                         <span class="is_enabled" style="color: black; letter-spacing: 0.1em;">Wyłączona</span>
+                      {% endif %}
+                    </span>
+                  </td>
+                  <td class="parent">
+                      {% if category.parent %}
+                          {{ category.parent }}
+                      {% else %}
+                          Brak
+                      {% endif %}
+                  </td>
+                  <td class="">
+                    <div class="dropdown">
+                      <a class="btn btn-sm btn-icon-only text-light" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-ellipsis-v"></i>
+                      </a>
+                      <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
+                        <a class="dropdown-item" href="{% url 'category_update' category.id %}">Edytuj</a>
+                        <a class="dropdown-item" href="{% url 'category_delete' category.id %}">Usuń</a>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {% include "includes/footer.html" %}
+
+  </div>
+
+{% endblock content %}
+
+<!-- Specific JS goes HERE -->
+{% block javascripts %}{% endblock javascripts %}

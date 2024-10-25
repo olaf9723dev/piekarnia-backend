@@ -1,0 +1,118 @@
+{% extends 'layouts/base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% load to_and %}
+{% block head %}
+<link rel="stylesheet" href="{% static 'assets/css/forms.css' %}?{% now 'U' %}"/>
+<link rel="stylesheet" href="{% static 'assets/css/product.css' %}?{% now 'U' %}"/>
+
+{% endblock %}
+{% block title %} Produkt {{ product.name }} {% endblock title %}
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}
+<style>
+    input[type=time], input[type=date]:not(#id_enable_date) {
+        background: transparent;
+        border: none;
+    }
+    input[type=submit] {
+        float: right;
+    }
+    li {
+        list-style: none;
+    }
+    td, th {
+        text-align: center;
+    }
+    .noDisplay{
+        display: none;
+    }
+</style>
+{% endblock stylesheets %}
+
+{% block content %}
+
+<!-- Header -->
+<div class="header bg-primary pb-6">
+    <div class="container-fluid">
+        <div class="header-body">
+            <div class="row align-items-center py-4">
+                <div class="col-lg-6 col-7">
+                    <h6 class="h2 text-white d-inline-block mb-0">Produkt {{ product.product.name }}</h6>
+                    <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+                        <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
+                            <li class="breadcrumb-item"><a href="#"><i class="fas fa-home"></i></a></li>
+                            <li class="breadcrumb-item"><a href="{% url 'place' place_id %}">Produkty</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Produkt {{ product.product.name }}</li>
+                        </ol>
+                    </nav>
+                </div>
+                <div class="col-lg-6 col-5 text-right">
+                    <a href="{% url 'product_in_place_create' place_id %}" class="btn btn-sm btn-neutral">Utwórz nowy produkt</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Page content -->
+<div class="container-fluid mt--6">
+    <div class="row">
+        <div class="col-xl-12">
+            <div class="card">
+                <div class="card-header border-0">
+                    <div class="row align-items-md-center">
+                        <div class="col">
+                            <h3 class="mr-3 mb-3 mt-3">Produkt {{ product.product.name }}</h3>
+                        </div>
+                        <div class="col text-right">
+                            <div class="menu-list">
+                                <div class="menu-right menu-arrow">
+                                    <a class="btn btn-primary" href="{% url 'place' place_id %}">Zobacz wszystkie</a>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-header border-0">
+                    <div class="row align-items-center">
+                        <div class="col-12">
+                            <div class="tab-content" id="myTabContent">
+                                <div class="tab-pane fade show active" id="product-tab-pane" role="tabpanel"
+                                     aria-labelledby="contact-tab" tabindex="0">
+                                    <div class="card-header border-0">
+                                        <div class="row align-items-center">
+                                            <div class="col">
+                                                <form enctype="multipart/form-data" method="post"
+                                                      class="uniForm blueForms" id="id-place_form">
+                                                    {% csrf_token %}
+                                                    {% crispy product_in_place_form %}
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {% include "includes/footer.html" %}
+
+        </div>
+
+        {% endblock content %}
+
+        <!-- Specific JS goes HERE -->
+        {% block javascripts %}
+
+        <script src="/static/assets/css/delete_asterisk_field.css"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="/static/assets/vendor/chart.js/dist/Chart.min.js"></script>
+        <script src="/static/assets/vendor/chart.js/dist/Chart.extension.js"></script>
+
+        {% endblock javascripts %}

@@ -1,0 +1,110 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+{% block title %} Zamówienia {% endblock title %}
+
+{% block content %}
+
+  <div class="header bg-primary pb-6">
+    <div class="container-fluid">
+      <div class="header-body">
+        <div class="row align-items-center py-4">
+          <div class="col-lg-6 col-7">
+            <h6 class="h2 text-white d-inline-block mb-0">Zamówienia</h6>
+            <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+              <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
+                <li class="breadcrumb-item"><a href="#"><i class="fas fa-home"></i></a></li>
+                <li class="breadcrumb-item"><a href="{% url 'admin_orders_list' %}">Zamówienia</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Zamówienia</li>
+              </ol>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Page content -->
+  <div class="container-fluid mt--6">
+    <div class="row">
+      <div class="col">
+        <div class="card">
+          <!-- Card header -->
+          <div class="card-header border-0">
+            <h3 class="mb-0">Zamówienia</h3>
+          </div>
+          <!-- Light table -->
+          <div class="table-responsive">
+            <table class="table align-items-center table-flush">
+              <thead class="thead-light">
+                <tr>
+                  <th scope="col" class="name">Numer zamówienia</th>
+                  <th scope="col" class="address">Status</th>
+                  <th scope="col" class="city">Sposób dostawy</th>
+                  <th scope="col" class="zip_code">Sposób płatności</th>
+                  <th scope="col" class="delivery_date">Data dostawy</th>
+                  <th scope="col" class="latitude_longitude">Czy powtarzalne?</th>
+                  <th scope="col" class="telephone ">Kwota zamówienia</th>
+                  <th scope="col" class="is_enabled">Faktura wystawiona?</th>
+                  <th scope="col" class="enable_date">Akcje</th>
+                </tr>
+              </thead>
+              <tbody class="list">
+                {% for order in orders %}
+                <tr {% if order.status < 5 %}style="font-weight: bold"{% endif %}>
+                  <td class="order_id">
+                    {{ order.order_id }}
+                  </td>
+                  <td class="status">
+                    {{ order.status_name }}
+                  </td>
+                  <td class="delivery_type">
+                    {{ order.delivery_type.name }}
+                  <td class="payment_method">
+                    {{ order.payment_method.display_name }}
+                  </td>
+                  </td>
+                    <td class="payment_method">
+                    {{ order.delivery_date | date:'d.m.Y H:i'}}
+                  </td>
+                  <td class="is_repeated">
+                    {% if order.is_repeated %} tak {% else %} nie {% endif %}
+                  </td>
+                  <td class="order_price">
+                    {{ order.order_price }}
+                  </td>
+                  <td class="has_invoice">
+                      {% if order.has_invoice %} tak {% else %} nie {% endif %}
+                  </td>
+                    <td class="text">
+                    <div class="dropdown">
+                      <a class="btn btn-sm btn-icon-only text-light" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-ellipsis-v"></i>
+                      </a>
+                      <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
+                          <a class="dropdown-item" href="{% url 'admin_order_details' order.pk %}">Szczegóły</a>
+                          <a class="dropdown-item" href="{% url 'admin_order_details' order.pk %}">Edytuj</a>
+                          <a class="dropdown-item" href="{% url 'admin_order_delete' order.pk %}">Usuń</a>
+                          <hr/>
+                          {% for status in statuses %}
+                              <a class="dropdown-item" href="{% url 'admin_update_status' order.pk status.0 %}">{{ status.1 }}</a>
+                          {% endfor %}
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {% include "includes/footer.html" %}
+
+  </div>
+
+{% endblock content %}
+
+<!-- Specific JS goes HERE -->
+{% block javascripts %}{% endblock javascripts %}

@@ -1,0 +1,43 @@
+{% block stylesheets %}
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css"
+          integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ=="
+          crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"
+            integrity="sha512-BB3hKbKWOc9Ez/TAwyWxNXeoV9c1v6FIeYiBieIWkpLjauysF18NzgR1MBNBXf8/KABdlkX68nAhlwcDFLGPCQ=="
+            crossorigin=""></script>
+{% endblock %}
+
+<div id="map" style="height: 500px"></div>
+
+<script>
+    var map = L.map('map').setView([50.277653, 19.1188424], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    {% if latitude %}
+        marker = new L.marker([{{ latitude }}, {{ longitude }}], {draggable: 'true'}).addTo(map);
+        map.panTo(new L.LatLng({{ latitude }}, {{ longitude }}))
+    {% else %}
+        marker = new L.marker([50.277653, 19.1188424], {draggable: 'true'}).addTo(map);
+        document.getElementsByName('latitude').forEach(e => {
+            e.value = 50.277653;
+        });
+        document.getElementsByName('longitude').forEach(e => {
+            e.value = 19.1188424;
+        });
+    {% endif %}
+
+    marker.on('dragend', function (event) {
+        var marker = event.target;
+        var position = marker.getLatLng();
+        marker.setLatLng(new L.LatLng(position.lat, position.lng), {draggable: 'true'});
+        map.panTo(new L.LatLng(position.lat, position.lng))
+        document.getElementsByName('latitude').forEach(e => {
+            e.value = position.lat;
+        });
+        document.getElementsByName('longitude').forEach(e => {
+            e.value = position.lng;
+        });
+    });
+</script>

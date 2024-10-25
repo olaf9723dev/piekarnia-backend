@@ -1,0 +1,22 @@
+{
+  "authors": [{
+    "name": "Kamil Serwata",
+    "mail": "kamil.serwata@notbug.pl"
+  }],
+  "packageName": "Polish REGON Service",
+  "packageVersion": 1.0,
+  "inputs": [
+    {
+      "name": "sandbox",
+      "type": "boolean",
+      "description": "Choose if using sandbox or prod",
+      "default": false
+    },
+    {
+      "name": "regon_key",
+      "type": "string",
+      "description": "Polish REGON service api key"
+    }
+  ],
+  "language": "Django"
+}

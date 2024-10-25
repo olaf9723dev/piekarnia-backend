@@ -1,0 +1,115 @@
+{% load static %}
+<nav class="sidenav navbar navbar-vertical  fixed-left  navbar-expand-xs navbar-light bg-white" id="sidenav-main">
+    <div class="scrollbar-inner">
+        <!-- Brand -->
+        <div class="sidenav-header  align-items-center">
+            <a class="navbar-brand" href="/">
+                <img src="{% static 'assets/img/logo.png' %}" class="navbar-brand-img"
+                     alt="Piekarnia">
+            </a>
+        </div>
+        <div class="navbar-inner">
+            <!-- Collapse -->
+            <div class="collapse navbar-collapse" id="sidenav-collapse-main">
+                <!-- Nav items -->
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'index' in segment %} active {% endif %}" href="/">
+                            <i class="ni ni-tv-2 text-primary"></i>
+                            <span class="nav-link-text">Statystyki</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'places' in segment %} active {% endif %}"
+                           href="{% url 'list_of_places' %}">
+                            <i class="ni ni-bullet-list-67 text-default"></i>
+                            <span class="nav-link-text">Lokale</span>
+                        </a>
+                    </li>
+                </ul>
+                <!-- Divider -->
+                <hr class="my-3">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'index' in segment %} active {% endif %}" href="{% url 'admin_orders_list' %}">
+                            <i class="ni ni-tv-2 text-primary"></i>
+                            <span class="nav-link-text">Zamówienia</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'places' in segment %} active {% endif %}"
+                           href="{% url 'list_of_places' %}">
+                            <i class="ni ni-bullet-list-67 text-default"></i>
+                            <span class="nav-link-text">Koszyki klientów</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'places' in segment %} active {% endif %}"
+                           href="{% url 'list_of_places' %}">
+                            <i class="ni ni-bullet-list-67 text-default"></i>
+                            <span class="nav-link-text">Klienci</span>
+                        </a>
+                    </li>
+                </ul>
+                <!-- Divider -->
+                <hr class="my-3">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'index' in segment %} active {% endif %}"
+                           href="{% url 'list_of_variant_group' %}">
+                            <i class="ni ni-bullet-list-67 text-default"></i>
+                            <span class="nav-link-text">Grupy wariantów</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'places' in segment %} active {% endif %}"
+                           href="{% url 'list_of_variants' %}">
+                            <i class="ni ni-bullet-list-67 text-default"></i>
+                            <span class="nav-link-text">Warianty</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'categories' in segment %} active {% endif %}"
+                           href="{% url 'list_of_categories' %}">
+                            <i class="ni ni-bullet-list-67 text-default"></i>
+                            <span class="nav-link-text">Kategorie</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'products' in segment %} active {% endif %}"
+                           href="{% url 'list_of_products' %}">
+                            <i class="ni ni-bullet-list-67 text-default"></i>
+                            <span class="nav-link-text">Produkty</span>
+                        </a>
+                    </li>
+                </ul>
+                <!-- Divider -->
+                <hr class="my-3">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'index' in segment %} active {% endif %}" href="/">
+                            <i class="ni ni-tv-2 text-primary"></i>
+                            <span class="nav-link-text">Strony CMS</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'places' in segment %} active {% endif %}"
+                           href="{% url 'list_of_places' %}">
+                            <i class="ni ni-bullet-list-67 text-default"></i>
+                            <span class="nav-link-text">Metody dostawy</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'places' in segment %} active {% endif %}"
+                           href="{% url 'list_of_places' %}">
+                            <i class="ni ni-bullet-list-67 text-default"></i>
+                            <span class="nav-link-text">Użytkownicy</span>
+                        </a>
+                    </li>
+                </ul>
+                <!-- Divider -->
+                <hr class="my-3">
+            </div>
+        </div>
+    </div>
+</nav>

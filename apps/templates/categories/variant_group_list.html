@@ -1,0 +1,93 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+{% block title %} Atrybuty {% endblock title %}
+
+{% block content %}
+
+<div class="header bg-primary pb-6">
+    <div class="container-fluid">
+        <div class="header-body">
+            <div class="row align-items-center py-4">
+                <div class="col-lg-6 col-7">
+                    <h6 class="h2 text-white d-inline-block mb-0">Produkty</h6>
+                    <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+                        <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
+                            <li class="breadcrumb-item"><a href="#"><i class="fas fa-home"></i></a></li>
+                            <li class="breadcrumb-item"><a href="{% url 'list_of_variant_group' %}">Produkty</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Produkty</li>
+                        </ol>
+                    </nav>
+                </div>
+                <div class="col-lg-6 col-5 text-right">
+                    <a href="{% url 'variant_group_create' %}" class="btn btn-sm btn-neutral">Utwórz nową grupę wariantów</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Page content -->
+<div class="container-fluid mt--6">
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <!-- Card header -->
+                <div class="card-header border-0">
+                    <h3 class="mb-0">Grupy wariantów</h3>
+                </div>
+                <!-- Light table -->
+                <div class="table-responsive">
+                    <table class="table align-items-center table-flush">
+                        <thead class="thead-light">
+                        <tr>
+                            <th scope="col" class="name">Nazwa</th>
+                            <th scope="col" class="category">Typ grupy</th>
+                            <th scope="col" class="net_price">max_selected_count</th>
+                            <th scope="col" class="net_price">min_selected_count</th>
+                            <th scope="col" class="actions">Akcje</th>
+                        </tr>
+                        </thead>
+                        <tbody class="list">
+                        {% for variant in variant_group %}
+                        <tr>
+                            <th scope="row">
+                                <span class="name mb-0 text-sm">{{ variant.name }}</span>
+                            </th>
+                            <td class="group">
+                                {{ variant.group_type }}
+                            </td>
+                            <td class="extra_price">
+                                {{ variant.max_selected_count }}
+                            </td>
+                            <td class="extra_price">
+                                {{ variant.min_selected_count }}
+                            </td>
+                            <td class="text">
+                                <div class="dropdown">
+                                    <a class="btn btn-sm btn-icon-only text-light" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fas fa-ellipsis-v"></i>
+                                    </a>
+                                    <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
+                                        <a class="dropdown-item" href="{% url 'variant_group_update' variant.id %}">Szczegóły</a>
+                                        <a class="dropdown-item" href="{% url 'variant_group_update' variant.id %}">Edytuj</a>
+                                        <a class="dropdown-item" href="{% url 'variant_group_delete' variant.id %}">Usuń</a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% include "includes/footer.html" %}
+
+</div>
+
+{% endblock content %}
+
+<!-- Specific JS goes HERE -->
+{% block javascripts %}{% endblock javascripts %}

@@ -1,0 +1,129 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+
+{% block title %} Produkty {% endblock title %}
+
+{% block content %}
+
+  <div class="header bg-primary pb-6">
+    <div class="container-fluid">
+      <div class="header-body">
+        <div class="row align-items-center py-4">
+          <div class="col-lg-6 col-7">
+            <h6 class="h2 text-white d-inline-block mb-0">Produkty</h6>
+            <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+              <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
+                <li class="breadcrumb-item"><a href="#"><i class="fas fa-home"></i></a></li>
+                <li class="breadcrumb-item"><a href="{% url 'list_of_products' %}">Produkty</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Produkty</li>
+              </ol>
+            </nav>
+          </div>
+          <div class="col-lg-6 col-5 text-right">
+            <a href="{% url 'product_create' %}" class="btn btn-sm btn-neutral">Utwórz nowy Produkt</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Page content -->
+  <div class="container-fluid mt--6">
+    <div class="row">
+      <div class="col">
+        <div class="card">
+          <!-- Card header -->
+          <div class="card-header border-0">
+            <h3 class="mb-0">Produkty</h3>
+          </div>
+          <!-- Light table -->
+          <div class="table-responsive">
+            <table class="table align-items-center table-flush">
+              <thead class="thead-light">
+                <tr>
+                  <th scope="col" class="name">Nazwa</th>
+                  <th scope="col" class="category">Kategoria</th>
+                  <th scope="col" class="net_price">Cena Netto</th>
+                  <th scope="col" class="vat_base">Podstawa Vat</th>
+                  <th scope="col" class="short_description">Krótki Opis</th>
+                  <th scope="col" class="is_promo">Produkt w Promocji</th>
+                  <th scope="col" class="is_new">Nowy Produkt</th>
+                  <th scope="col" class="is_enabled">Włączony</th>
+                  <th scope="col" class="actions">Akcje</th>
+                  <!-- Those element should be in detail / update view
+                  <th scope="col" class="telephone ">Opis</th>
+                  <th scope="col" class="enable_date">Podobne Produkty</th>
+                  <th scope="col" class="enable_date">Kod Produktu</th>
+                  <th scope="col" class="enable_date">Tagi</th>
+                  <th scope="col" class="enable_date">Dostępne Rodzaje Dostawy</th>  -->
+                </tr>
+              </thead>
+              <tbody class="list">
+                {% for product in products %}
+                <tr>
+                  <th scope="row">
+                      <span class="name mb-0 text-sm">{{ product.name }}</span>
+                  </th>
+                  <td class="category">
+                    {{ product.category }}
+                  </td>
+                  <td class="net_price">
+                    {{ product.net_price }}
+                  </td>
+                  <td class="vat_base">
+                    {{ product.vat_base }}
+                  </td>
+                  <td class="short_description">
+                    {{ product.short_description }}
+                  </td>
+                  <td class="is_promo">
+                    {% if product.is_promo %}
+                    <span class="badge badge-success">Promo</span>
+                    {% endif %}
+                  </td>
+                  <td class="is_new">
+                    {% if product.is_new %}
+                    <span class="badge badge-primary">Nowy</span>
+                    {% endif %}
+                  </td>
+                  <td>
+                    <span class="badge badge-dot mr-4">
+                      {% if product.is_enabled %}
+                        <i class="bg-success"></i>
+                        <span class="is_enabled" style="color: black; letter-spacing: 0.1em;">Włączony</span>
+                      {% else %}
+                        <i class="bg-warning"></i>
+                        <span class="is_enabled" style="color: black; letter-spacing: 0.1em;">Wyłączony</span>
+                      {% endif %}
+                    </span>
+                  </td>
+
+                  <td class="text">
+                    <div class="dropdown">
+                      <a class="btn btn-sm btn-icon-only text-light" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-ellipsis-v"></i>
+                      </a>
+                      <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
+                         <a class="dropdown-item" href="{% url 'product_update' product.id %}">Szczegóły</a>
+                         <a class="dropdown-item" href="{% url 'product_update' product.id %}">Edytuj</a>
+                         <a class="dropdown-item" href="{% url 'product_delete' product.id %}">Usuń</a>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {% include "includes/footer.html" %}
+
+  </div>
+
+{% endblock content %}
+
+<!-- Specific JS goes HERE -->
+{% block javascripts %}{% endblock javascripts %}

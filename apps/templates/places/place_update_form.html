@@ -1,0 +1,158 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+
+{% block title %} Lokal {{ place.name }} {% endblock title %}
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+    <!-- Header -->
+    <div class="header bg-primary pb-6">
+        <div class="container-fluid">
+            <div class="header-body">
+                <div class="row align-items-center py-4">
+                    <div class="col-lg-6 col-7">
+                        <h6 class="h2 text-white d-inline-block mb-0">Lokal {{ place.name }}</h6>
+                        <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+                            <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
+                                <li class="breadcrumb-item"><a href="#"><i class="fas fa-home"></i></a></li>
+                                <li class="breadcrumb-item"><a href="{% url 'list_of_places' %}">Lokale</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Lokal {{ place.name }}</li>
+                            </ol>
+                        </nav>
+                    </div>
+                    <div class="col-lg-6 col-5 text-right">
+                        <div class="col text-right">
+                            <a href="{% url 'place_create' %}" class="btn btn-sm btn-neutral">Utwórz nowy lokal</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Page content -->
+    <div class="container-fluid mt--6">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-header border-0">
+                        <div class="row align-items-center">
+                            <div class="col">
+                                <h3 class="mb-0">Aktualizacja Lokalu {{ place.name }}</h3>
+                            </div>
+                            <div class="col text-right">
+                                <a href="{% url 'list_of_places' %}" class="btn btn-sm btn-primary">Zobacz wszystkie</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-header border-0">
+                        <div class="row align-items-center">
+                            <div class="col">
+                                <form method="post" onsubmit="return onSubmit()" enctype="multipart/form-data">{% csrf_token %}
+                                    {% csrf_token %}
+                                    {{ place_form.non_field_errors }}
+                                    <div class="row">
+                                        <div class="col form-group">
+                                            {{ place_form.name.errors }}
+                                            <label for="{{ place_form.name.id_for_label }}">Nazwa:</label>
+                                            {{ place_form.name }}
+                                        </div>
+                                        <div class="col">
+                                            <div class="form-group">
+                                                {{ place_form.logo.errors }}
+                                                <label for="{{ place_form.logo.id_for_label }}">Logo:</label>
+                                                {{ place_form.logo }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Labels below will be on the right side of Logo-->
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="form-group">
+                                                {{ place_form.address.errors }}
+                                                <label for="{{ place_form.address.id_for_label }}">Adres:</label>
+                                                {{ place_form.address }}
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="form-group">
+                                                {{ place_form.zip_code.errors }}
+                                                <label for="{{ place_form.zip_code.id_for_label }}">Kod Pocztowy:</label>
+                                                {{ place_form.zip_code }}
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="form-group">
+                                                {{ place_form.city.errors }}
+                                                <label for="{{ place_form.city.id_for_label }}">Miasto:</label>
+                                                {{ place_form.city }}
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="form-group">
+                                                {{ place_form.telephone.errors }}
+                                                <label for="{{ place_form.telephone.id_for_label }}">Telefon:</label>
+                                                {{ place_form.telephone }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% include 'core/map_picker.html' with latitude=place.latitude longitude=place.longitude %}
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="form-group form-switch">
+                                                {{ place_form.is_enabled.errors }}
+                                                <label class="form-check-label"
+                                                       for="{{ place_form.is_enabled.id_for_label }}">
+                                                    Status Lokalu: {% if place.is_enabled %} Włączony {% else %}
+                                                    Wyłączony{% endif %}
+                                                </label>
+                                                <br>
+                                                <input class="form-check-input" type="checkbox"
+                                                       id="{{ place_form.is_enabled.id_for_label }} is_enabled"
+                                                       name="is_enabled"
+                                                       checked>Włącz
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="form-group">
+                                                {{ place_form.enable_date.errors }}
+                                                <label for="{{ place_form.enable_date.id_for_label }}">Data Otwarcia:</label>
+                                                {{ place_form.enable_date }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        {{ place_form.description.errors }}
+                                        <label for="{{ place_form.description.id_for_label }}">Opis Lokalu:</label>
+                                        {{ place_form.description }}
+                                    </div>
+                                    <input type="hidden" name="latitude" value="{{ place.latitude }}"/>
+                                    <input type="hidden" name="longitude" value="{{ place.longitude }}"/>
+                                    <input type="submit" class="btn btn-primary" value="Aktualizuj">
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% include "includes/footer.html" %}
+    </div>
+{% endblock content %}
+<!-- Specific JS goes HERE -->
+{% block javascripts %}
+
+    <script src="/static/assets/js/switcher.js"></script>
+    <script src="/static/assets/vendor/chart.js/dist/Chart.min.js"></script>
+    <script src="/static/assets/vendor/chart.js/dist/Chart.extension.js"></script>
+
+    <script>
+        function onSubmit() {
+            $('[name=is_enabled]').val($('[name=is_enabled]').val() === 'on' ? 1 : 0);
+            return true;
+        }
+    </script>
+
+{% endblock javascripts %}

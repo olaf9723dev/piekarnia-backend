@@ -1,0 +1,6 @@
+.noDisplay{
+    display: none;
+}
+.focused .form-control{
+    border-color: red !important;
+}

@@ -1,0 +1,438 @@
+{% extends 'layouts/base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/assets/css/forms.css' %}?{% now 'U' %}"/>
+
+{% endblock %}
+{% block title %} Lokal {{ place.name }} {% endblock title %}
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}
+    <style>
+        input[type=time], input[type=date]:not(#id_enable_date) {
+            background: transparent;
+            border: none;
+        }
+
+        input[type=submit] {
+            float: right;
+        }
+
+        li {
+            list-style: none;
+        }
+
+        td, th {
+            text-align: center;
+        }
+
+        .noDisplay {
+            display: none;
+        }
+    </style>
+{% endblock stylesheets %}
+
+{% block content %}
+
+    <!-- Header -->
+    <div class="header bg-primary pb-6">
+        <div class="container-fluid">
+            <div class="header-body">
+                <div class="row align-items-center py-4">
+                    <div class="col-lg-6 col-7">
+                        <h6 class="h2 text-white d-inline-block mb-0">Lokal {{ place.name }}</h6>
+                        <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+                            <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
+                                <li class="breadcrumb-item"><a href="#"><i class="fas fa-home"></i></a></li>
+                                <li class="breadcrumb-item"><a href="{% url 'list_of_places' %}">Lokale</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Lokal {{ place.name }}</li>
+                            </ol>
+                        </nav>
+                    </div>
+                    <div class="col-lg-6 col-5 text-right">
+                        <a href="{% url 'place_create' %}" class="btn btn-sm btn-neutral">Utwórz nowy lokal</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page content -->
+    <div class="container-fluid mt--6">
+    <div class="row">
+    <div class="col-xl-12">
+    <div class="card">
+        <div class="card-header border-0">
+            <div class="row align-items-md-center">
+                <div class="col">
+                    <h3 class="mr-3 mb-3 mt-3">Lokal {{ place.name }}</h3>
+                </div>
+                <a class="btn btn-warning" id="sync-btn" style="margin-bottom: 20px"
+                   href="{% url 'sync_database' %}?place_id={{ place.pk }}">Synchronizuj produkty</a>
+                <div class="col text-right">
+                    <div class="menu-list">
+                        <div class="menu-right menu-arrow">
+                            <a class="btn btn-primary" href="{% url 'list_of_places' %}">Zobacz wszystkie</a>
+                            <a class="btn btn-success" href="{% url 'place_update' place.id %}">Edytuj</a>
+                            <a class="btn btn-danger" href="{% url 'place_delete' place.id %}">Usuń</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-header border-0">
+            <div class="row align-items-center">
+                <div class="col">
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active text-decoration-none" id="contact-tab"
+                                    data-bs-toggle="tab"
+                                    data-bs-target="#contact-tab-pane" type="button" role="tab"
+                                    aria-controls="contact-tab-pane" aria-selected="true">Dane Kontaktowe
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="open-tab" data-bs-toggle="tab"
+                                    data-bs-target="#open-tab-pane" type="button" role="tab"
+                                    aria-controls="open-tab-pane" aria-selected="false">Godziny Otwarcia
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="opinions-tab" data-bs-toggle="tab"
+                                    data-bs-target="#opinions-tab-pane" type="button" role="tab"
+                                    aria-controls="opinions-tab-pane" aria-selected="false">Opinie
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="products-tab" data-bs-toggle="tab"
+                                    data-bs-target="#products-tab-pane" type="button" role="tab"
+                                    aria-controls="products-tab-pane" aria-selected="false">Produkty
+                            </button>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="myTabContent">
+                        <div class="tab-pane fade show active" id="contact-tab-pane" role="tabpanel"
+                             aria-labelledby="contact-tab" tabindex="0">
+                            <div class="card-header border-0">
+                                <div class="row align-items-center">
+                                    <div class="col">
+                                        <form enctype="multipart/form-data" method="post"
+                                              class="uniForm blueForms" id="id-place_form">
+                                            {% csrf_token %}
+                                            {% include 'core/map_picker.html' with latitude=place.latitude longitude=place.longitude %}
+                                            {{ place_form.errors }}
+                                            {% crispy place_form %}
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="open-tab-pane" role="tabpanel"
+                             aria-labelledby="open-tab" tabindex="0">
+                            <div class="row" style="justify-content: center">
+                                <div class="col-lg-6">
+                                    <div style="text-align: center; color: slategrey">
+                                        <br>
+                                        <h6>Status Lokalu:
+                                            {% if place.is_enabled %}
+                                                <i class="bg-success"></i>
+                                                <span class="is_enabled">Włączony</span>
+                                            {% else %}
+                                                <i class="bg-warning"></i>
+                                                <span class="is_enabled">Wyłączony</span>
+                                            {% endif %}</h6>
+                                        <br>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row" style="justify-content: center">
+                                <div class="col-lg-6">
+                                    <div style="text-align: center; color: slategrey">
+                                        <br>
+                                        <h6>Standardowe Godziny Otwarcia Lokalu</h6>
+                                        <br>
+                                    </div>
+                                    <form action="{% url 'place' place_id %}" method="post">
+                                        {% csrf_token %}
+                                        <table class="table align-items-center table-flush">
+                                            <thead class="thead-light">
+                                            <tr>
+                                                <th scope="col" class="date">Dzień Tygodnia</th>
+                                                <th scope="col" class="day_of_week">Godzina Otwarcia</th>
+                                                <th scope="col" class="open_hours">Godzina Zamknięcia</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr>
+                                                <th>Poniedziałek</th>
+                                                <th><input type="time"
+                                                           value='{{ monday.start_time|slice:5|date:'H:i:s' }}'
+                                                           name="monday_start_time"/></th>
+                                                <th><input type="time"
+                                                           value="{{ monday.end_time|slice:5|date:'H:i:s' }}"
+                                                           name="monday_end_time" }/></th>
+                                            </tr>
+                                            <tr>
+                                                <th>Wtorek</th>
+                                                <th><input type="time"
+                                                           value='{{ tuesday.start_time|slice:5|date:'H:i:s' }}'
+                                                           name="tuesday_start_time"/></th>
+                                                <th><input type="time"
+                                                           value="{{ tuesday.end_time|slice:5|date:'H:i:s' }}"
+                                                           name="tuesday_end_time"/></th>
+                                            </tr>
+                                            <tr>
+                                                <th>Środa</th>
+                                                <th><input type="time"
+                                                           value='{{ wednesday.start_time|slice:5|date:'H:i:s' }}'
+                                                           name="wednesday_start_time"/></th>
+                                                <th><input type="time"
+                                                           value="{{ wednesday.end_time|slice:5|date:'H:i:s' }}"
+                                                           name="wednesday_end_time"/></th>
+                                            </tr>
+                                            <tr>
+                                                <th>Czwartek</th>
+                                                <th><input type="time"
+                                                           value='{{ thursday.start_time|slice:5|date:'H:i:s' }}'
+                                                           name="thursday_start_time"/></th>
+                                                <th><input type="time"
+                                                           value="{{ thursday.end_time|slice:5|date:'H:i:s' }}"
+                                                           name="thursday_end_time"/></th>
+                                            </tr>
+                                            <tr>
+                                                <th>Piątek</th>
+                                                <th><input type="time"
+                                                           value='{{ friday.start_time|slice:5|date:'H:i:s' }}'
+                                                           name="friday_start_time"/></th>
+                                                <th><input type="time"
+                                                           value="{{ friday.end_time|slice:5|date:'H:i:s' }}"
+                                                           name="friday_end_time"/></th>
+                                            </tr>
+                                            <tr>
+                                                <th>Sobota</th>
+                                                <th><input type="time"
+                                                           value='{{ saturday.start_time|slice:5|date:'H:i:s' }}'
+                                                           name="saturday_start_time"/></th>
+                                                <th><input type="time"
+                                                           value="{{ saturday.end_time|slice:5|date:'H:i:s' }}"
+                                                           name="saturday_end_time"/></th>
+                                            </tr>
+                                            <tr>
+                                                <th>Niedziela</th>
+                                                <th><input type="time"
+                                                           value='{{ sunday.start_time|slice:5|date:'H:i:s' }}'
+                                                           name="sunday_start_time"/></th>
+                                                <th><input type="time"
+                                                           value="{{ sunday.end_time|slice:5|date:'H:i:s' }}"
+                                                           name="sunday_end_time"/></th>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                        <input type="submit" class="btn btn-primary" name="opening_hours_update"
+                                               value="Zapisz"/>
+                                    </form>
+                                    <div class="table-responsive">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row" style="justify-content: center">
+                                <div class="col-lg-6">
+                                    {% if custom_opening_hours %}
+                                        <div style="text-align: center; color: slategrey">
+                                            <br>
+                                            <br>
+                                            <h6>Niestandardowe Godziny Otwarcia Lokalu</h6>
+                                            <br>
+                                        </div>
+                                        <div class="table-responsive">
+                                            <table class="table align-items-center table-flush">
+                                                <thead class="thead-light">
+                                                <tr>
+                                                    <th scope="col" class="date">Data</th>
+                                                    <th scope="col" class="day_of_week">Dzień Tygodnia</th>
+                                                    <th scope="col" class="open_hours">Czynne w Godzinach</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                {% for custom_opening_hour in custom_opening_hours %}
+                                                    <tr>
+                                                        <th scope="row" class="date">
+                                                            {{ custom_opening_hour.date | date:"d.m.Y" }}
+                                                        </th>
+                                                        <td class="day_of_week">
+                                                            {{ custom_opening_hour.date | date:"l" }}
+                                                        </td>
+                                                        <td class="open_hours">
+                                                            {% if custom_opening_hour.is_closed and custom_opening_hour.start_time and custom_opening_hour.end_time %}
+                                                                Nieczynne od
+                                                                {{ custom_opening_hour.start_time | date:"G:i" }}
+                                                                do
+                                                                {{ custom_opening_hour.end_time | date:"G:i" }}
+                                                            {% elif custom_opening_hour.is_closed %}
+                                                                Nieczynne
+                                                            {% elif custom_opening_hour.start_time and custom_opening_hour.end_time %}
+                                                                Otwarte od
+                                                                {{ custom_opening_hour.start_time | date:"G:i" }}
+                                                                do
+                                                                {{ custom_opening_hour.end_time | date:"G:i" }}
+                                                            {% elif custom_opening_hour.start_time %}
+                                                                Otwarte od
+                                                                {{ custom_opening_hour.start_time | date:"G:i" }}
+                                                            {% elif custom_opening_hour.end_time %}
+                                                                Otwarte do
+                                                                {{ custom_opening_hour.end_time | date:"G:i" }}
+                                                            {% else %}
+                                                                Czynne
+                                                            {% endif %}
+                                                        </td>
+                                                    </tr>
+                                                {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    {% else %}
+                                        <h5>Brak dodanych godzin otwarcia lokalu.</h5>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="row" style="justify-content: center">
+                                <div class="col-lg-6">
+                                    <div style="text-align: center; color: slategrey">
+                                        <br>
+                                        <br>
+                                        <h6>Dodaj Niestandardowe Godziny Otwarcia Lokalu</h6>
+                                        <br>
+                                    </div>
+                                    <form action="{% url 'place' place_id %}" method="post">
+                                        {% csrf_token %}
+                                        <div class="table-responsive">
+                                            <table class="table align-items-center table-flush">
+                                                <thead class="thead-light">
+                                                <tr>
+                                                    <th scope="col" class="date">Dzień Tygodnia</th>
+                                                    <th scope="col" class="day_of_week">Godzina Otwarcia</th>
+                                                    <th scope="col" class="open_hours">Godzina Zamknięcia</th>
+                                                    <th scope="col" class="open_hours">Status</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                {{ custom_opening_hours_form.errors }}
+                                                {{ custom_opening_hours_form.non_form_errors }}
+                                                <tr>
+                                                    <th>{{ custom_opening_hours_form.date }}</th>
+                                                    <th>{{ custom_opening_hours_form.start_time }}</th>
+                                                    <th>{{ custom_opening_hours_form.end_time }}</th>
+                                                    <th>{{ custom_opening_hours_form.is_closed }}</th>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <input type="submit" class='btn btn-primary' value="Dodaj"
+                                               name="custom_opening_hours_form">
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade" id="opinions-tab-pane" role="tabpanel"
+                             aria-labelledby="opinions-tab" tabindex="0">
+                            Tu będą opinie o produktach
+                        </div>
+
+                        <div class="tab-pane fade" id="products-tab-pane" role="tabpanel"
+                             aria-labelledby="products-tab" tabindex="0">
+                            <div class="card">
+                                <!-- Card header -->
+                                <div class="card-header border-0">
+                                    <div class="row align-items-md-center">
+                                        <div class="col">
+                                            <h3 class="mb-0">Produkty w lokalu</h3>
+                                        </div>
+                                        <div class="col text-right">
+                                            <div class="menu-list">
+                                                <div class="menu-right menu-arrow">
+                                                    <a class="btn btn-primary"
+                                                       href="{% url 'product_in_place_create' place_id %}">Dodaj
+                                                        nowy produkt</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Light table -->
+                                <div class="table-responsive">
+                                    <table class="table align-items-center table-flush">
+                                        <thead class="thead-light">
+                                        <tr>
+                                            <th scope="col" class="name">Nazwa</th>
+                                            {#                                            <th scope="col" class="category">Warianty</th>#}
+                                            <th scope="col" class="net_price">Cena</th>
+                                            <th scope="col" class="actions">Akcje</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody class="list">
+                                        {% for product in products_in_place %}
+                                            <tr>
+                                                <th scope="row">
+                                                    <span class="name mb-0 text-sm">{{ product.product.name }}</span>
+                                                </th>
+                                                {#                                                <td class="variant">#}
+                                                {#                                                    {% for variant in product.variant.all %}#}
+                                                {#                                                        {{ variant.name }}{% if not forloop.last %}, {% endif %}#}
+                                                {#                                                    {% endfor %}#}
+                                                {#                                                </td>#}
+                                                <td class="price">
+                                                    {{ product.custom_price }}
+                                                </td>
+
+                                                <td class="text">
+                                                    <div class="dropdown">
+                                                        <a class="btn btn-sm btn-icon-only text-light" href="#"
+                                                           role="button" data-toggle="dropdown" aria-haspopup="true"
+                                                           aria-expanded="false">
+                                                            <i class="fas fa-ellipsis-v"></i>
+                                                        </a>
+                                                        <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
+                                                            <a class="dropdown-item"
+                                                               href="{% url 'product_in_place_update' place_id product.id %}">Szczegóły</a>
+                                                            <a class="dropdown-item"
+                                                               href="{% url 'product_in_place_update' place_id product.id %}">Edytuj</a>
+                                                            <a class="dropdown-item"
+                                                               href="{% url 'product_in_place_delete' place_id product.id %}">Usuń</a>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% include "includes/footer.html" %}
+
+    </div>
+
+{% endblock content %}
+
+<!-- Specific JS goes HERE -->
+{% block javascripts %}
+
+    <script type="text/javascript">
+        $('span:contains("Zmień")').parent().parent().addClass('noDisplay');
+    </script>
+
+    <script src="/static/assets/css/delete_asterisk_field.css"></script>
+
+    <script src="/static/assets/vendor/chart.js/dist/Chart.min.js"></script>
+    <script src="/static/assets/vendor/chart.js/dist/Chart.extension.js"></script>
+
+{% endblock javascripts %}

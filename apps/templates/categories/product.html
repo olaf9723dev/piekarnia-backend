@@ -1,0 +1,746 @@
+{% extends 'layouts/base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% load to_and %}
+{% block head %}
+<link rel="stylesheet" href="{% static 'assets/css/forms.css' %}?{% now 'U' %}"/>
+<link rel="stylesheet" href="{% static 'assets/css/product.css' %}?{% now 'U' %}"/>
+
+{% endblock %}
+{% block title %} Produkt {{ product.name }} {% endblock title %}
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}
+<style>
+    input[type=time], input[type=date]:not(#id_enable_date) {
+        background: transparent;
+        border: none;
+    }
+    input[type=submit] {
+        float: right;
+    }
+    li {
+        list-style: none;
+    }
+    td, th {
+        text-align: center;
+    }
+    .noDisplay{
+        display: none;
+    }
+    .product_image {
+        max-height: 300px;
+        max-width: 250px;
+    }
+    .image-details {
+    position: absolute;
+    top: 10px;
+    right: 0;
+    }
+    .images {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    }
+    .product_image_wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    margin-bottom: 15px;
+    }
+    input[type=checkbox] {
+        width: 14px;
+        height: 14px;
+    }
+    #add-new-prod-var {
+        position: absolute;
+        right: 10px;
+    }
+</style>
+{% endblock stylesheets %}
+
+{% block content %}
+
+<!-- Header -->
+<div class="header bg-primary pb-6">
+    <div class="container-fluid">
+        <div class="header-body">
+            <div class="row align-items-center py-4">
+                <div class="col-lg-6 col-7">
+                    <h6 class="h2 text-white d-inline-block mb-0">Produkt {{ produkt.name }}</h6>
+                    <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+                        <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
+                            <li class="breadcrumb-item"><a href="#"><i class="fas fa-home"></i></a></li>
+                            <li class="breadcrumb-item"><a href="{% url 'list_of_products' %}">Produkty</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Produkt {{ product.name }}</li>
+                        </ol>
+                    </nav>
+                </div>
+                <div class="col-lg-6 col-5 text-right">
+                    <a href="{% url 'product_create' %}" class="btn btn-sm btn-neutral">Utwórz nowy produkt</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Page content -->
+<div class="container-fluid mt--6">
+    <div class="row">
+        <div class="col-xl-12">
+            <div class="card">
+                <div class="card-header border-0">
+                    <div class="row align-items-md-center">
+                        <div class="col">
+                            <h3 class="mr-3 mb-3 mt-3">Produkt</h3>
+                        </div>
+                        <div class="col text-right">
+                            <div class="menu-list">
+                                <div class="menu-right menu-arrow">
+                                    <a class="btn btn-primary" href="{% url 'list_of_products' %}">Zobacz wszystkie</a>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-header border-0">
+                    <div class="row align-items-center">
+                        <div class="col-12">
+                            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active text-decoration-none" id="product-tab"
+                                            data-bs-toggle="tab"
+                                            data-bs-target="#product-tab-pane" type="button" role="tab"
+                                            aria-controls="product-tab-pane" aria-selected="true">Produkt
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="variants-tab" data-bs-toggle="tab"
+                                            data-bs-target="#variants-tab-pane" type="button" role="tab"
+                                            aria-controls="variants-tab-pane" aria-selected="false">Warianty
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="images-tab" data-bs-toggle="tab"
+                                            data-bs-target="#images-tab-pane" type="button" role="tab"
+                                            aria-controls="images-tab-pane" aria-selected="false">Zdjęcia
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="desc-tab" data-bs-toggle="tab"
+                                            data-bs-target="#desc-tab-pane" type="button" role="tab"
+                                            aria-controls="desc-tab-pane" aria-selected="false">Opisy
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="statistics-tab" data-bs-toggle="tab"
+                                            data-bs-target="#statistics-tab-pane" type="button" role="tab"
+                                            aria-controls="statistics-tab-pane" aria-selected="false">Statystyki
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="rating-tab" data-bs-toggle="tab"
+                                            data-bs-target="#rating-tab-pane" type="button" role="tab"
+                                            aria-controls="rating-tab-pane" aria-selected="false">Rating
+                                    </button>
+                                </li>
+                            </ul>
+                            <div class="tab-content" id="myTabContent">
+                                <div class="tab-pane fade show active" id="product-tab-pane" role="tabpanel"
+                                     aria-labelledby="contact-tab" tabindex="0">
+                                    <div class="card-header border-0">
+                                        <div class="row align-items-center">
+                                            <div class="col">
+                                                <form enctype="multipart/form-data" method="post"
+                                                      class="uniForm blueForms" id="id-place_form">
+                                                    {% csrf_token %}
+                                                    {% crispy product_form %}
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="tab-pane fade" id="variants-tab-pane" role="tabpanel"
+                                     aria-labelledby="open-tab" tabindex="0">
+                                    <div class="row" style="justify-content: center">
+                                        <br>
+                                            <div class="col-lg-12" style="margin-top: 30px; margin-bottom: 50px">
+                                                <button class="btn btn-primary variant-header" id="add-new-prod-var" style="cursor: pointer">Dodaj nowy wariant</button>
+
+                                                <form method="post" action="{% url 'create_product_variant' product.id %}" class="form-toggle">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" value="{{ product_variant.pk }}" name="prod_var_pk"/>
+                                                    <div class="form-row">
+                                                        <div class="form-group col-md-4 mb-0">
+                                                            <div class="form-group">
+                                                                <div class="custom-control custom-checkbox">
+                                                                    <input type="checkbox" name="is_enabled"/>
+                                                                    <label>Dostępny</label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group col-md-4 mb-0">
+                                                            <div class="form-group">
+                                                                <div class="custom-control custom-checkbox">
+                                                                    <input type="checkbox" name="use_custom_stock"/>
+                                                                    <label>Używaj własnej liczby sztuk</label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-row form-row">
+                                                        <div class="form-group col-md-4 mb-0">
+                                                            <div class="form-group">
+                                                                <label class="requiredField">Dodatkowa cena<span class="asteriskField">*</span></label>
+                                                                <div>
+                                                                    <input type="number" step="0.01" name="extra_price" class="form-control textinput textInput"/>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group col-md-4 mb-0">
+                                                            <div class="form-group">
+                                                                <label class="requiredField">Waga<span class="asteriskField">*</span></label>
+                                                                <div>
+                                                                    <input type="number" name="weight" class="form-control textinput textInput"/>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group col-md-4 mb-0">
+                                                            <div class="form-group">
+                                                                <label class="requiredField">Czas wysyłki<span class="asteriskField">*</span></label>
+                                                                <div>
+                                                                    <input type="text" name="delivery_time" class="form-control textinput textInput"/>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-row form-row">
+                                                        <div class="form-group col-md-6 mb-0">
+                                                            <div class="form-group">
+                                                                <label class="requiredField">Ilość w magazynie<span class="asteriskField">*</span></label>
+                                                                <div>
+                                                                    <input type="number" name="stock" class="form-control textinput textInput"/>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group col-md-6 mb-0">
+                                                            <div class="form-group">
+                                                                <label class="requiredField">Jednostka<span class="asteriskField">*</span></label>
+                                                                <div>
+                                                                    <select type="number" name="unit" class="form-control">
+                                                                        <option value="0">szt.</option>
+                                                                        <option value="1">kg.</option>
+                                                                        <option value="2">kpl.</option>
+                                                                        <option value="3">l</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <ul class="list-group">
+
+                                                    {% for variant in variant_group %}
+                                                    <li class="li-gr" style="margin-bottom:30px">
+<!--                                                        <input class="form-check-input checkbox-attr" style="margin-top:5px" type="checkbox" name="input-{{variant.name|to_ands|lower}}"/>-->
+                                                        <h3>{{ variant }} </h3>
+                                                        <select class="form-select" name="select-{{variant.name|to_ands|lower}}">
+                                                            <option>Wybierz opcję</option>
+                                                            {% for var in variants %}
+                                                            {% if variant == var.group %}
+
+                                                            <option value="{{var.pk}}"
+                                                                    {% for product_variant_variant in product_variant.variant.all %}
+                                                                    {% if var.pk == product_variant_variant.pk %} selected {% endif %}
+                                                                    {% endfor %}
+                                                            >{{ var.name }} - {{ var.extra_price }} zł</option>
+                                                            {% endif %}
+                                                            {% endfor %}
+                                                        </select>
+                                                    </li>
+                                                    {% endfor %}
+                                                </ul>
+                                                    <input type="submit" class="btn btn-primary" value="Zapisz"/>
+                                                </form>
+                                            </div>
+
+                                        {% for product_variant in product_variant %}
+                                        <div class="card-header border-0">
+                                            <div class="col-lg-12" style="margin-top: 10px">
+                                                <h2 class="variant-header" style="cursor: pointer">{{ product_variant.product }} {{ product_variant.pk }}</h2>
+                                                <form method="post" action="{% url 'create_product_variant' product.id %}" class="form-toggle">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" value="{{ product_variant.pk }}" name="prod_var_pk"/>
+                                                    <div class="form-row">
+                                                        <div class="form-group col-md-4 mb-0">
+                                                            <div class="form-group">
+                                                                <div class="custom-control custom-checkbox">
+                                                                    <input type="checkbox" name="is_enabled" {% if product_variant.is_enabled %} checked {% endif %} />
+                                                                    <label>Dostępny</label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group col-md-4 mb-0">
+                                                            <div class="form-group">
+                                                                <div class="custom-control custom-checkbox">
+                                                                    <input type="checkbox" name="use_custom_stock" {% if product_variant.use_custom_stock %} checked {% endif %}/>
+                                                                    <label>Używaj własnej liczby sztuk</label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-row form-row">
+                                                        <div class="form-group col-md-4 mb-0">
+                                                            <div class="form-group">
+                                                                <label class="requiredField">Dodatkowa cena<span class="asteriskField">*</span></label>
+                                                                <div>
+                                                                    <input type="number" name="extra_price" value="{{ product_variant.extra_price }}" class="form-control textinput textInput"/>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group col-md-4 mb-0">
+                                                            <div class="form-group">
+                                                                <label class="requiredField">Waga<span class="asteriskField">*</span></label>
+                                                                <div>
+                                                                    <input type="number" name="weight" value="{{ product_variant.weight }}" class="form-control textinput textInput"/>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group col-md-4 mb-0">
+                                                            <div class="form-group">
+                                                                <label class="requiredField">Czas wysyłki<span class="asteriskField">*</span></label>
+                                                                <div>
+                                                                    <input type="text" name="delivery_time" value="{{ product_variant.delivery_time }}" class="form-control textinput textInput"/>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-row form-row">
+                                                        <div class="form-group col-md-6 mb-0">
+                                                            <div class="form-group">
+                                                                <label class="requiredField">Ilość w magazynie<span class="asteriskField">*</span></label>
+                                                                <div>
+                                                                    <input type="number" name="stock" value="{{ product_variant.stock }}" class="form-control textinput textInput"/>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group col-md-6 mb-0">
+                                                            <div class="form-group">
+                                                                <label class="requiredField">Jednostka<span class="asteriskField">*</span></label>
+                                                                <div>
+                                                                    <select type="number" name="unit" value="{{ product_variant.unit }}" class="form-control">
+                                                                        <option value="0">szt.</option>
+                                                                        <option value="1">kg.</option>
+                                                                        <option value="2">kpl.</option>
+                                                                        <option value="3">l</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <ul class="list-group">
+
+                                                    {% for variant in variant_group %}
+                                                    <li class="li-gr" style="margin-bottom:30px">
+<!--                                                        <input class="form-check-input checkbox-attr" style="margin-top:5px" type="checkbox" name="input-{{variant.name|to_ands|lower}}"/>-->
+                                                        <h3>{{ variant }} </h3>
+                                                        <select class="form-select" name="select-{{variant.name|to_ands|lower}}">
+                                                            <option>Wybierz opcję</option>
+                                                            {% for var in variants %}
+                                                            {% if variant == var.group %}
+
+                                                            <option value="{{var.pk}}"
+                                                                    {% for product_variant_variant in product_variant.variant.all %}
+                                                                    {% if var.pk == product_variant_variant.pk %} selected {% endif %}
+                                                                    {% endfor %}
+                                                            >{{ var.name }} - {{ var.extra_price }} zł</option>
+                                                            {% endif %}
+                                                            {% endfor %}
+                                                        </select>
+                                                    </li>
+                                                    {% endfor %}
+                                                </ul>
+                                                    <input type="submit" class="btn btn-primary" value="Zapisz"/>
+                                                </form>
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                        <div class="col-lg-6"></div>
+                                    </div>
+
+                                    </div>
+                                    <div class="tab-pane fade" id="images-tab-pane" role="tabpanel"
+                                         aria-labelledby="images-tab" tabindex="0">
+                                         <div class="card-header border-0">
+                                            <div class="row align-items-md-center">
+                                                <div class="col">
+                                                    <h3 class="mb-0">Zdjęcia produktu</h3>
+                                                </div>
+                                                <div class="col text-right">
+                                                    <div class="menu-list">
+                                                        <div class="menu-right menu-arrow">
+                                                            <a class="btn btn-primary"
+                                                               href="{% url 'product_image_create' product.pk %}">Dodaj zdjęcie</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="card-header border-0">
+                                            <div class="row align-items-center">
+                                                <div class="col images">
+                                                    {% for image in images %}
+                                                    <div class="product_image_wrapper">
+                                                    {% if image.image %}
+                                                        <img class="product_image" src="{{ image.image.url }}" alt="Zdjęcie produktu"/>
+                                                    {% else %}
+                                                        <img class="product_image" src="{% static 'assets/img/logo.png' %}" alt="Zdjęcie produktu"/>
+                                                    {% endif %}
+                                                        <div class="dropdown image-details">
+                                                          <a class="btn btn-sm btn-icon-only text-light" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                            <i class="fas fa-ellipsis-v"></i>
+                                                          </a>
+                                                          <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
+                                                             <a class="dropdown-item" href="{% url 'product_image_update' product.id image.pk %}">Edytuj</a>
+                                                             <a class="dropdown-item" href="{% url 'product_image_delete' product.id image.pk %}">Usuń</a>
+                                                          </div>
+                                                        </div>
+                                                    </div>
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="tab-pane fade" id="desc-tab-pane" role="tabpanel"
+                                         aria-labelledby="products-tab" tabindex="0">...
+                                    </div>
+                                    <div class="tab-pane fade" id="statistics-tab-pane" role="tabpanel"
+                                         aria-labelledby="products-tab" tabindex="0">
+                                        <br>
+                                        <div class="row">
+                                            <div class="col-xl-3 col-md-6">
+                                                <div class="card card-stats">
+                                                    <!-- Card body -->
+                                                    <div class="card-body">
+                                                        <div class="row">
+                                                            <div class="col">
+                                                                <h5 class="card-title text-uppercase text-muted mb-0">Całkowita sprzedaż</h5>
+                                                                <span class="h2 font-weight-bold mb-0" id="total_amount"></span>
+                                                            </div>
+                                                            <div class="col-auto">
+                                                                <div class="icon icon-shape bg-gradient-red text-white rounded-circle shadow">
+                                                                    <i class="ni ni-active-40"></i>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+<!--                                                        <p class="mt-3 mb-0 text-sm">-->
+<!--                                                            <span class="text-success mr-2" name="daily_record"><i class="fa fa-arrow-up"></i> 3.48%</span>-->
+<!--                                                            <span class="text-nowrap">Dzienny rekord</span>-->
+<!--                                                        </p>-->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xl-3 col-md-6">
+                                                <div class="card card-stats">
+                                                    <!-- Card body -->
+                                                    <div class="card-body">
+                                                        <div class="row">
+                                                            <div class="col">
+                                                                <h5 class="card-title text-uppercase text-muted mb-0">Dzisiaj</h5>
+                                                                <span class="h2 font-weight-bold mb-0" id="sold_today">49,65%</span>
+                                                            </div>
+                                                            <div class="col-auto">
+                                                                <div class="icon icon-shape bg-gradient-info text-white rounded-circle shadow">
+                                                                    <i class="ni ni-chart-bar-32"></i>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+<!--                                                        <p class="mt-3 mb-0 text-sm">-->
+<!--                                                            <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 3.48%</span>-->
+<!--                                                            <span class="text-nowrap">Since last month</span>-->
+<!--                                                        </p>-->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xl-3 col-md-6">
+                                                <div class="card card-stats">
+                                                    <!-- Card body -->
+                                                    <div class="card-body">
+                                                        <div class="row">
+                                                            <div class="col">
+                                                                <h5 class="card-title text-uppercase text-muted mb-0">Dzienny rekord</h5>
+                                                                <span class="h2 font-weight-bold mb-0" id="total_daily_amount"></span>
+                                                            </div>
+                                                            <div class="col-auto">
+                                                                <div class="icon icon-shape bg-gradient-orange text-white rounded-circle shadow">
+                                                                    <i class="ni ni-chart-pie-35"></i>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+<!--                                                        <p class="mt-3 mb-0 text-sm">-->
+<!--                                                            <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 3.48%</span>-->
+<!--                                                            <span class="text-nowrap" id="total_daily_amount_day">Since last month</span>-->
+<!--                                                        </p>-->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <br>
+                                            <div class="col-xl-3 col-md-6">
+                                                <div class="card card-stats">
+                                                    <!-- Card body -->
+                                                    <div class="card-body">
+                                                        <div class="row">
+                                                            <div class="col">
+                                                                <h5 class="card-title text-uppercase text-muted mb-0">Średnia dziennie</h5>
+                                                                <span class="h2 font-weight-bold mb-0" id="daily_average"></span>
+                                                            </div>
+                                                            <div class="col-auto">
+                                                                <div class="icon icon-shape bg-gradient-green text-white rounded-circle shadow">
+                                                                    <i class="ni ni-money-coins"></i>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+<!--                                                        <p class="mt-3 mb-0 text-sm">-->
+<!--                                                            <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 3.48%</span>-->
+<!--                                                            <span class="text-nowrap">Since last month</span>-->
+<!--                                                        </p>-->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+<!--wykres-->
+                                        <div class="col-xl-12">
+                                            <div class="card">
+                                                <div class="card-header bg-transparent">
+                                                    <div class="row align-items-center">
+                                                        <div class="col">
+                                                            <h6 class="text-light text-uppercase ls-1 mb-1">Overview</h6>
+                                                            <h5 class="h3 text-white mb-0">Sales value</h5>
+                                                        </div>
+                                                        <div class="col">
+                                                            <ul class="nav nav-pills justify-content-end">
+                                                                <li class="nav-item mr-2 mr-md-0" data-toggle="chart" data-target="#chart-sales-dark" data-update='{"data":{"datasets":[{"data":[0, 20, 10, 30, 15, 40, 20, 60, 60]}]}}' data-prefix="$" data-suffix="k">
+                                                                    <a href="#" class="nav-link py-2 px-3" data-toggle="tab" onclick="update_data(365)">
+                                                                        <span class="d-none d-md-block">Rok</span>
+                                                                        <span class="d-md-none">R</span>
+                                                                    </a>
+                                                                </li>
+                                                                <li class="nav-item mr-2 mr-md-0" data-toggle="chart" data-target="#chart-sales-dark" data-update='{"data":{"datasets":[{"data":[0, 20, 10, 30, 15, 40, 20, 60, 60]}]}}' data-prefix="$" data-suffix="k">
+                                                                    <a href="#" class="nav-link py-2 px-3 active" data-toggle="tab" onclick="update_data(30)">
+                                                                        <span class="d-none d-md-block">30 dni</span>
+                                                                        <span class="d-md-none">M</span>
+                                                                    </a>
+                                                                </li>
+                                                                <li class="nav-item" data-toggle="chart" data-target="#chart-sales-dark" data-prefix="$" data-suffix="k">
+                                                                    <a href="#" class="nav-link py-2 px-3" data-toggle="tab" onclick="update_data(7)">
+                                                                        <span class="d-none d-md-block">7 dni</span>
+                                                                        <span class="d-md-none">T</span>
+                                                                    </a>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="card-body">
+                                                    <!-- Chart -->
+                                                    <div>
+                                                        <canvas id="myChart"></canvas>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+<!---->                                 <h2>Lista zamówień</h2>
+                                        <div class="col-xl-12">
+                                            <table id="table" class="table table-hovered table-striped table-bordered container">
+                                                <thead>
+                                                <tr>
+                                                    <th>Użytkownik</th>
+                                                    <th>Data</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                {% for stat in statistics %}
+                                                <tr>
+                                                    <td>{{ stat.user }}</td>
+                                                    <td>{{ stat.date }}</td>
+
+                                                </tr>
+                                                {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="rating-tab-pane" role="tabpanel"
+                                         aria-labelledby="products-tab" tabindex="0">...
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {% include "includes/footer.html" %}
+
+        </div>
+
+        {% endblock content %}
+
+        <!-- Specific JS goes HERE -->
+        {% block javascripts %}
+
+        <script type="text/javascript">
+    <!-- WARIANTY -->
+        let variantGroup = [];
+
+        {% for varGr in variant_group %}
+        variantGroup.push({
+                name: "{{ varGr.name }}",
+            })
+        {% endfor %}
+
+    variantGroup.forEach(el => {
+        $(`[name=input-${(el.name).replace(' ', '_').toLowerCase()}]`).click(() => {
+            console.log($(`[name=input-${(el.name).replace(' ', '_').toLowerCase()}]`).val())
+            if ($(`[name=input-${(el.name).replace(' ', '_').toLowerCase()}]`).is(":checked")) {
+                console.log('s')
+                console.log($(`[name=input-${(el.name).replace(' ', '_').toLowerCase()}]`).is(":checked"))
+                $(`[name=select-${(el.name).replace(' ', '_').toLowerCase()}]`).removeAttr('disabled')
+            } else {
+                $(`[name=select-${(el.name).replace(' ', '_').toLowerCase()}]`).attr('disabled', true);
+                $(`[name=select-${(el.name).replace(' ', '_').toLowerCase()}]`).val(0)
+                console.log('d')
+                console.log($(`[name=input-${(el.name).replace(' ', '_').toLowerCase()}]`).is(":checked"))
+            }
+        })
+    })
+
+    $('.checkbox-attr').each((index, el) => {
+      let nameEl = (el.name).replace('input', 'select');
+        if ($(`[name=${nameEl}]`).children("option:selected").val() !== "Wybierz opcję")  {
+            $(el).prop('checked', true);
+            $(`[name=${nameEl}]`).attr('disabled', false)
+        } else {
+            $(el).val(false)
+        };
+    })
+        $('.variant-header').click(e => {
+            console.log(e);
+            $(e.target).next().slideToggle();
+        })
+        $('.form-toggle').each((i,e) => {
+            $(e).slideUp();
+        })
+        $('.inp-click').each((i,e) => {
+            $(e).click(e => {
+                $(e).val(!$(e).val())
+            });
+        })
+    <!-- ZDJĘCIA -->
+    <!-- OPISY -->
+    <!-- STATISTICS -->
+            $('span:contains("Zmień")').parent().parent().addClass('noDisplay');
+
+            let statistics = [];
+
+            {% for stat in statistics %}
+            statistics.push({
+                user: "{{ stat.user }}",
+                date: "{{ stat.date | date:'d.m.Y H:i:s' }}",
+            })
+            {% endfor %}
+
+            let datas = [];
+            let today = new Date().toLocaleDateString('pl-pl', { day:"2-digit", year:"numeric", month:"numeric"});
+            let today_sold = 0;
+
+            const labels = [
+                'January',
+                'February',
+                'March',
+                'April',
+                'May',
+                'June',
+            ];
+
+            const data = {
+                datasets: [{
+                    label: '',
+                    backgroundColor: 'rgb(255, 99, 132)',
+                    borderColor: 'rgb(255, 99, 132)',
+                    data: datas,
+                }]
+            };
+
+            const config = {
+                type: 'line',
+                data: data,
+                options: {
+                    scales: {
+                        y: {
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    }
+                }
+            };
+            const myChart = new Chart(
+                document.getElementById('myChart'),
+                config
+            );
+            function prepare_datas (x) {
+                let today1 =  new Date();
+                for (let i = x; i >= 0 ; i--) {
+                    let today =  new Date();
+                    let date2 = (today.setDate(today.getDate() - i));
+                    var daysInMonth = (new Date(date2)).toLocaleDateString('pl-pl', { day:"2-digit", year:"numeric", month:"numeric"});
+                    datas.push({x: daysInMonth, y:0})
+                }
+                statistics.forEach(stat => {
+                    stat.date.slice(0,10) == today1.toLocaleDateString('pl-pl', { day:"2-digit", year:"numeric", month:"numeric"}) ? today_sold++ : '';
+                    datas.forEach(data => {
+                        data.x.toString() == stat.date.slice(0,10) ? data.y++ : console.log('');
+                    })
+                });
+            }
+            function update_data (x) {
+                let newDatas = [];
+
+                for (let i = x; i >= 0 ; i--) {
+                    let today =  new Date();
+                    let date2 = (today.setDate(today.getDate() - i));
+                    var daysInMonth = (new Date(date2)).toLocaleDateString('pl-pl', { day:"2-digit", year:"numeric", month:"numeric"});
+                    newDatas.push({x: daysInMonth, y:0})
+                }
+                statistics.forEach(stat => {
+                    newDatas.forEach(data => {
+                        data.x.toString() == stat.date.slice(0,10) ? data.y++ : '';
+                    })
+                });
+                myChart.config.data.datasets[0].data = newDatas;
+                myChart.update();
+            }
+            prepare_datas(30);
+            document.getElementById('total_amount').innerText = statistics.length;
+            document.getElementById('total_daily_amount').innerText = Math.max(...datas.map(o => o.y))
+            document.getElementById('daily_average').innerText = (([...datas.map(o => o.y)].reduce((a, b) => a + b, 0))/datas.length).toFixed(2);
+            document.getElementById('sold_today').innerText = today_sold;
+
+        </script>
+
+        <script src="/static/assets/css/delete_asterisk_field.css"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="/static/assets/vendor/chart.js/dist/Chart.min.js"></script>
+        <script src="/static/assets/vendor/chart.js/dist/Chart.extension.js"></script>
+
+        {% endblock javascripts %}

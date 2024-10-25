@@ -1,0 +1,80 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+
+{% block title %} Lokal {{ place.name }} {% endblock title %}
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+    <!-- Header -->
+    <div class="header bg-primary pb-6">
+      <div class="container-fluid">
+        <div class="header-body">
+          <div class="row align-items-center py-4">
+            <div class="col-lg-6 col-7">
+              <h6 class="h2 text-white d-inline-block mb-0">Lokal {{ place.name }}</h6>
+              <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+                <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
+                  <li class="breadcrumb-item"><a href="#"><i class="fas fa-home"></i></a></li>
+                  <li class="breadcrumb-item"><a href="{% url 'list_of_places' %}">Lokale</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">Lokal {{ place.name }}</li>
+                </ol>
+              </nav>
+            </div>
+            <div class="col-lg-6 col-5 text-right">
+              <div class="col text-right">
+                  <a href="{% url 'place_create' %}" class="btn btn-sm btn-neutral">Utwórz nowy lokal</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Page content -->
+    <div class="container-fluid mt--6">
+      <div class="row">
+        <div class="col-xl-12">
+          <div class="card">
+            <div class="card-header border-0">
+              <div class="row align-items-center">
+                <div class="col">
+                  <h3 class="mb-0">Usuwanie Lokalu {{ place.name }}</h3>
+                </div>
+                <div class="col text-right">
+                  <a href="{% url 'list_of_places' %}" class="btn btn-sm btn-primary">Zobacz wszystkie</a>
+                </div>
+              </div>
+            </div>
+            <div class="card-header border-0">
+              <div class="row align-items-center">
+                <div class="col">
+                  <form method="post">
+                      {% csrf_token %}
+                      <p>Czy jesteś pewien, że chcesz usunąć lokal {{ place.name }} z bazy danych?</p>
+                      {{ form.as_p }}
+                      <input type="submit" value="Usuń" class="btn btn-danger">
+                  </form>
+
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      {% include "includes/footer.html" %}
+
+    </div>
+
+{% endblock content %}
+
+<!-- Specific JS goes HERE -->
+{% block javascripts %}
+
+  <script src="/static/assets/vendor/chart.js/dist/Chart.min.js"></script>
+  <script src="/static/assets/vendor/chart.js/dist/Chart.extension.js"></script>
+
+{% endblock javascripts %}
